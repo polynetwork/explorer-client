@@ -1,20 +1,9 @@
-version: '3.8'
+version: '3.3'
 
 services:
-  db:
-    image: postgres:13.6
-    restart: always
-    container_name: 'postgres'
-    environment:
-        POSTGRES_PASSWORD: ''
-        POSTGRES_USER: 'postgres'
-        POSTGRES_HOST_AUTH_METHOD: 'trust'
-    ports:
-      - 7432:5432
-
   blockscout:
-    depends_on:
-      - db
+    tty: true
+    network_mode: host
     image: blockscout/blockscout:${DOCKER_TAG:-latest}
     build:
       context: ..
@@ -22,9 +11,7 @@ services:
       args:
         COIN: ""
     restart: always
-    container_name: 'blockscout'
-    links:
-      - db:database
+    container_name: 'blockscout_test'
     command: 'mix do ecto.create, ecto.migrate, phx.server'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
@@ -32,4 +19,3 @@ services:
       -  ./envs/common-blockscout.env
     ports:
       - 4000:4000
-
