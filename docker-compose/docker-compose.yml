@@ -1,15 +1,8 @@
-version: '3.3'
+version: '3.8'
 
 services:
   blockscout:
-    tty: true
-    network_mode: host
     image: blockscout/blockscout:${DOCKER_TAG:-latest}
-    build:
-      context: ..
-      dockerfile: ./docker/Dockerfile
-      args:
-        COIN: ""
     restart: always
     container_name: 'blockscout_test'
     command: 'mix do ecto.create, ecto.migrate, phx.server'
