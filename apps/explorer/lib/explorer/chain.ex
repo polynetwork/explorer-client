@@ -1198,20 +1198,21 @@ defmodule Explorer.Chain do
     else
       with {:transactions_exist, true} <- {:transactions_exist, Repo.exists?(Transaction)},
            min_block_number when not is_nil(min_block_number) <- Repo.aggregate(Transaction, :min, :block_number) do
-        min_block_number =
-          min_block_number
-          |> Decimal.max(EthereumJSONRPC.first_block_to_fetch(:trace_first_block))
-          |> Decimal.to_integer()
-
-        query =
-          from(
-            b in Block,
-            join: pending_ops in assoc(b, :pending_operations),
-            where: pending_ops.fetch_internal_transactions,
-            where: b.consensus and b.number == ^min_block_number
-          )
-
-        !Repo.exists?(query)
+        true
+#        min_block_number =
+#          min_block_number
+#          |> Decimal.max(EthereumJSONRPC.first_block_to_fetch(:trace_first_block))
+#          |> Decimal.to_integer()
+#
+#        query =
+#          from(
+#            b in Block,
+#            join: pending_ops in assoc(b, :pending_operations),
+#            where: pending_ops.fetch_internal_transactions,
+#            where: b.consensus and b.number == ^min_block_number
+#          )
+#
+#        !Repo.exists?(query)
       else
         {:transactions_exist, false} -> true
         nil -> false

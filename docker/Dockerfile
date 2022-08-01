@@ -10,7 +10,8 @@ ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc \
     MIX_ENV="prod" \
     SECRET_KEY_BASE="RMgI4C1HSkxsEjdhtGMfwAHfyT6CKWXOgzCboJflfSm4jeAlic52io05KB6mqzc5" \
     PATH="$HOME/.cargo/bin:${PATH}" \
-    RUSTFLAGS="-C target-feature=-crt-static"
+    RUSTFLAGS="-C target-feature=-crt-static" \
+    SOCKET_ROOT="ws://43.133.163.63:4001"
 
 RUN set -ex && \
     apk --update add libstdc++ curl ca-certificates && \
@@ -33,7 +34,6 @@ ARG CACHE_ENABLE_TOTAL_GAS_USAGE_COUNTER
 ARG WOBSERVER_ENABLED
 ARG ADMIN_PANEL_ENABLED
 ARG CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL
-ARG SOCKET_ROOT
 ARG CHAIN_ID
 ARG JSON_RPC
 ARG SUBNETWORK
