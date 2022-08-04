@@ -1,7 +1,10 @@
 version: '3.8'
 
 services:
-  blockscout:
+  blockscout_server:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
     image: blockscout/blockscout:${DOCKER_TAG:-latest}
     restart: always
     container_name: 'blockscout_test'

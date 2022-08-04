@@ -25,6 +25,7 @@ defmodule BlockScoutWeb.CSPHeader do
 
   defp websocket_endpoints(conn) do
     host = Conn.get_req_header(conn, "host")
-    "ws://#{host} wss://#{host}"
+    wsUrl = System.get_env("SOCKET_ROOT")
+    "ws://#{host} wss://#{host} #{wsUrl}"
   end
 end
