@@ -11,7 +11,9 @@ ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc \
     SECRET_KEY_BASE="RMgI4C1HSkxsEjdhtGMfwAHfyT6CKWXOgzCboJflfSm4jeAlic52io05KB6mqzc5" \
     PATH="$HOME/.cargo/bin:${PATH}" \
     RUSTFLAGS="-C target-feature=-crt-static" \
-    SOCKET_ROOT="ws://43.133.163.63:4001"
+    NETWORK_PATH="/testnet" \
+    SOCKET_ROOT="/testnet" \
+    BLOCKSCOUT_HOST="explorer.zion.network"
 
 RUN set -ex && \
     apk --update add libstdc++ curl ca-certificates && \
@@ -85,5 +87,3 @@ FROM bitwalker/alpine-elixir-phoenix:1.13
 WORKDIR /app
 
 COPY --from=builder /opt/release/blockscout .
-
-
