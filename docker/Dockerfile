@@ -13,7 +13,8 @@ ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc \
     RUSTFLAGS="-C target-feature=-crt-static" \
     NETWORK_PATH="/testnet" \
     SOCKET_ROOT="/testnet" \
-    BLOCKSCOUT_HOST="explorer.zion.network"
+    BLOCKSCOUT_HOST="explorer.zion.network" \
+    API_PATH="/testnet"
 
 RUN set -ex && \
     apk --update add libstdc++ curl ca-certificates && \
@@ -25,21 +26,6 @@ RUN set -ex && \
 
 # Get Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-
-ARG CACHE_EXCHANGE_RATES_PERIOD
-ARG DISABLE_READ_API
-ARG API_PATH
-ARG NETWORK_PATH
-ARG DISABLE_WEBAPP
-ARG DISABLE_WRITE_API
-ARG CACHE_ENABLE_TOTAL_GAS_USAGE_COUNTER
-ARG WOBSERVER_ENABLED
-ARG ADMIN_PANEL_ENABLED
-ARG CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL
-ARG CHAIN_ID
-ARG JSON_RPC
-ARG SUBNETWORK
-ARG COIN_NAME
 
 # Cache elixir deps
 ADD mix.exs mix.lock ./

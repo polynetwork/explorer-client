@@ -229,6 +229,14 @@ defmodule BlockScoutWeb.LayoutView do
     end
   end
 
+  def network_path do
+    Application.get_env(:block_scout_web, BlockScoutWeb.Endpoint)[:url][:api_path]
+    |> case do
+         :error -> ""
+         url -> url
+       end
+  end
+
   def external_apps_list do
     if Application.get_env(:block_scout_web, :external_apps) do
       try do
