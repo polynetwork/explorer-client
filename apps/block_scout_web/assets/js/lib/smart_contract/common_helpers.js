@@ -206,8 +206,9 @@ export function hideConnectButton () {
 }
 
 function setConnectToAddress (account) {
+  let websocketRootUrl = process.env.SOCKET_ROOT
   if (document.querySelector('[connected-to-address]')) {
-    document.querySelector('[connected-to-address]').innerHTML = `<a href='/address/${account}'>${trimmedAddressHash(account)}</a>`
+    document.querySelector('[connected-to-address]').innerHTML = `<a href='${websocketRootUrl}/address/${account}'>${trimmedAddressHash(account)}</a>`
   }
 }
 
