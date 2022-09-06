@@ -19,7 +19,7 @@
 
     <div class="row">
       <div class="col-xs-12 col-lg-3">
-        <p class="footer-info-text"><%= gettext("Poly Network is a global cross-chain protocol for implementing blockchain interoperability and building Web3.0 infrastructure.") %></p>
+        <p class="footer-info-text"><%= gettext("Blockscout is a tool for inspecting and analyzing EVM based blockchains. Blockchain explorer for Ethereum Networks.") %></p>
         <div class="footer-social-icons">
           <a href="https://github.com/polynetwork" rel="noreferrer" target="_blank" class="footer-social-icon" title='<%= gettext("Github") %>'>
             <div class="footer-social-icon-container fontawesome-icon github"></div>
@@ -85,8 +85,13 @@
         </div>
       <% end %>
     </div>
-      <div>
-        <%= gettext("© 2022 PolyNetwork. All rights reserved") %>
-      </div>
+    <% version = version() %>
+
+    <%= unless ignore_version?(version) do %>
+      <% release_link = release_link(version) %>
+    <div>
+      <%= gettext("Powered by BlockScout Version") %>: <%= release_link %>
+    </div>
+    <% end %>
   </div>
 </footer>
