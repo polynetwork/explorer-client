@@ -4,7 +4,7 @@ defmodule BlockScoutWeb.CSPHeader do
   """
 
   alias Phoenix.Controller
-  alias Plug.Conn
+#  alias Plug.Conn
 
   def init(opts), do: opts
 
@@ -23,7 +23,7 @@ defmodule BlockScoutWeb.CSPHeader do
     })
   end
 
-  defp websocket_endpoints(conn) do
+  defp websocket_endpoints(_conn) do
     host = System.get_env("BLOCKSCOUT_HOST")
     "ws://#{host} wss://#{host}"
   end

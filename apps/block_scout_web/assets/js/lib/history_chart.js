@@ -8,6 +8,8 @@ import { formatUsdValue } from '../lib/currency'
 import sassVariables from '../../css/export-vars-to-js.module.scss'
 
 Chart.defaults.font.family = 'Nunito, "Helvetica Neue", Arial, sans-serif,"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+Chart.defaults.font.size = "18px"
+Chart.defaults.font.weight = "700"
 Chart.register(LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip)
 
 const grid = {

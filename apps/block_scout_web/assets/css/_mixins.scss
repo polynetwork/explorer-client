@@ -49,6 +49,8 @@
     color: $text-color;
     display: block;
     white-space: nowrap;
+    font-size: 18px;
+    font-weight: 700;
   }
 
   &-label-item {
@@ -62,8 +64,8 @@
   &-value {
     color: $value-color;
     display: block;
-    font-size: 1.5rem;
-    font-weight: 200;
+    font-size: 34px;
+    font-weight: 300;
     white-space: nowrap;
 
     @media (max-width: $breakpoint-lg) {
@@ -126,7 +128,7 @@
   }
 }
 
-@mixin btn-line($bg-color: #fff, $text-color: $secondary, $font-size: 12px) {
+@mixin btn-line($bg-color: #fff, $text-color: $secondary, $font-size: 16px) {
   -webkit-appearance: none !important;
   align-items: center;
   background-color: $bg-color;
@@ -136,7 +138,6 @@
   cursor: pointer;
   display: flex;
   font-size: $font-size;
-  font-weight: 600;
   height: 36px;
   justify-content: center;
   outline: none;
@@ -145,7 +146,7 @@
   transition: $transition-cont;
   white-space: nowrap;
   width: fit-content;
-  font-weight: 400;
+  font-weight: 700;
 
   &:hover {
     background-color: $text-color;

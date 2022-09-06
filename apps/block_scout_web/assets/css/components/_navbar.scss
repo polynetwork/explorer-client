@@ -1,6 +1,6 @@
 // Default variables
 $header-background-color: #fff !default;
-$header-links-color: #828ba0 !default;
+$header-links-color: rgba(0, 0, 0, 0.8);
 $header-links-color-active: #333 !default;
 $header-icon-color: $header-links-color !default;
 $header-icon-color-hover: $secondary !default;
@@ -28,8 +28,9 @@ $navbar-logo-width: 100% !default;
       outline: none;
       align-items: center;
       color: $header-links-color;
+      font-weight: 600;
       display: flex;
-      font-size: 14px;
+      font-size: 16px;
       position: relative;
       transition: $transition-cont;
 
@@ -201,9 +202,7 @@ $navbar-logo-width: 100% !default;
     width: 100%;
 
     &.border {
-      border-color: $secondary !important;
       border-radius: 5px;
-      color: $secondary;
       background-color: $header-textfield-background-color;
     }
   }
@@ -243,7 +242,7 @@ $navbar-logo-width: 100% !default;
 
 .navbar-logo {
   max-height: $navbar-logo-height;
-  width: $navbar-logo-width;
+  width: 50%;
 }
 
 .logo-text {
