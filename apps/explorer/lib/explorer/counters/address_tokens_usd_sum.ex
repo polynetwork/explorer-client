@@ -5,10 +5,10 @@ defmodule Explorer.Counters.AddressTokenUsdSum do
   use GenServer
 
   alias Explorer.Chain
-  alias Explorer.Counters.Helper
+#  alias Explorer.Counters.Helper
 
   @cache_name :address_tokens_usd_value
-  @last_update_key "last_update"
+#  @last_update_key "last_update"
 
   config = Application.get_env(:explorer, Explorer.Counters.AddressTokenUsdSum)
   @enable_consolidation Keyword.get(config, :enable_consolidation)
@@ -20,7 +20,7 @@ defmodule Explorer.Counters.AddressTokenUsdSum do
 
   @impl true
   def init(_args) do
-    create_cache_table()
+#    create_cache_table()
 
     {:ok, %{consolidate?: enable_consolidation?()}, {:continue, :ok}}
   end
@@ -40,51 +40,44 @@ defmodule Explorer.Counters.AddressTokenUsdSum do
     {:noreply, state}
   end
 
-  def fetch(address_hash_string, token_balances) do
-    if cache_expired?(address_hash_string) do
-      Task.start_link(fn ->
-        update_cache(address_hash_string, token_balances)
-      end)
+  def fetch(_address_hash_string, token_balances) do
       Chain.address_tokens_usd_sum(token_balances)
-      else
-      fetch_from_cache("hash_#{address_hash_string}")
-    end
   end
 
   def cache_name, do: @cache_name
 
-  defp cache_expired?(address_hash_string) do
-    cache_period = address_tokens_usd_sum_cache_period()
-    updated_at = fetch_from_cache("hash_#{address_hash_string}_#{@last_update_key}")
+#  defp cache_expired?(address_hash_string) do
+#    cache_period = address_tokens_usd_sum_cache_period()
+#    updated_at = fetch_from_cache("hash_#{address_hash_string}_#{@last_update_key}")
+#
+#    cond do
+#      is_nil(updated_at) -> true
+#      Helper.current_time() - updated_at > cache_period -> true
+#      true -> false
+#    end
+#  end
 
-    cond do
-      is_nil(updated_at) -> true
-      Helper.current_time() - updated_at > cache_period -> true
-      true -> false
-    end
-  end
-
-  defp update_cache(address_hash_string, token_balances) do
-    put_into_cache("hash_#{address_hash_string}_#{@last_update_key}", Helper.current_time())
-    new_data = Chain.address_tokens_usd_sum(token_balances)
-    put_into_cache("hash_#{address_hash_string}", new_data)
-  end
-
-  defp fetch_from_cache(key) do
-    Helper.fetch_from_cache(key, @cache_name)
-  end
-
-  defp put_into_cache(key, value) do
-    :ets.insert(@cache_name, {key, value})
-  end
-
-  defp create_cache_table do
-    Helper.create_cache_table(@cache_name)
-  end
+#  defp update_cache(address_hash_string, token_balances) do
+#    put_into_cache("hash_#{address_hash_string}_#{@last_update_key}", Helper.current_time())
+#    new_data = Chain.address_tokens_usd_sum(token_balances)
+#    put_into_cache("hash_#{address_hash_string}", new_data)
+#  end
+#
+#  defp fetch_from_cache(key) do
+#    Helper.fetch_from_cache(key, @cache_name)
+#  end
+#
+#  defp put_into_cache(key, value) do
+#    :ets.insert(@cache_name, {key, value})
+#  end
+#
+#  defp create_cache_table do
+#    Helper.create_cache_table(@cache_name)
+#  end
 
   defp enable_consolidation?, do: @enable_consolidation
 
-  defp address_tokens_usd_sum_cache_period do
-    Helper.cache_period("CACHE_ADDRESS_TOKENS_USD_SUM_PERIOD", 1)
-  end
+#  defp address_tokens_usd_sum_cache_period do
+#    Helper.cache_period("CACHE_ADDRESS_TOKENS_USD_SUM_PERIOD", 1)
+#  end
 end
