@@ -29,7 +29,7 @@ defmodule Explorer.KnownTokens do
   @impl GenServer
   def handle_info({_ref, {:ok, addresses}}, state) do
     if store() == :ets do
-      records = Enum.map(addresses, fn x -> {x["symbol"], x["address"]} end)
+      records = Enum.map(addresses, fn x -> {x["symbol"], x["address"], x["cmc_id"]} end)
 
       :ets.insert(table_name(), records)
     end
@@ -89,6 +89,18 @@ defmodule Explorer.KnownTokens do
   end
 
   @doc """
+  Lists known tokens name.
+  """
+  @spec listCmcId :: [{String.t(), Hash.Address.t()}]
+  def listCmcId do
+    if enabled?() do
+      cmc_id_from_store(store())
+    else
+      []
+    end
+  end
+
+  @doc """
   Returns a specific address from the known tokens by symbol
   """
   @spec lookup(String.t()) :: {:ok, Hash.Address.t()} | :error | nil
@@ -96,7 +108,7 @@ defmodule Explorer.KnownTokens do
     if store() == :ets && enabled?() do
       if ets_table_exists?(table_name()) do
         case :ets.lookup(table_name(), symbol) do
-          [{_symbol, address} | _] -> Hash.Address.cast(address)
+          [{_symbol, address, _cmc_id} | _] -> Hash.Address.cast(address)
           _ -> nil
         end
       else
@@ -121,7 +133,7 @@ defmodule Explorer.KnownTokens do
   end
 
   @spec fetch_known_tokens :: Task.t()
-  defp fetch_known_tokens do
+  def fetch_known_tokens do
     Task.Supervisor.async_nolink(Explorer.MarketTaskSupervisor, fn ->
       Source.fetch_known_tokens()
     end)
@@ -136,6 +148,13 @@ defmodule Explorer.KnownTokens do
   end
 
   defp list_from_store(_), do: []
+
+  defp cmc_id_from_store(:ets) do
+    table_name()
+    |> :ets.tab2list()
+    |> Enum.map(&elem(&1, 2))
+    |> Enum.sort()
+  end
 
   defp store do
     config(:store) || :ets

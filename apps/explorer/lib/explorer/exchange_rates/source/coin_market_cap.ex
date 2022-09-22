@@ -13,16 +13,17 @@ defmodule Explorer.ExchangeRates.Source.CoinMarketCap do
   @impl Source
   def format_data(%{"data" => _} = json_data) do
     market_data = json_data["data"]
-    token_properties = get_token_properties(market_data)
+    token_properties_list = get_token_properties(market_data)
+    Enum.map(token_properties_list, fn token_properties -> extractTokenInfo(token_properties) end)
+  end
 
+  @impl Source
+  def format_data(_), do: []
+
+  defp extractTokenInfo(token_properties) do
     last_updated = get_last_updated(token_properties)
     current_price = get_current_price(token_properties)
-
     id = token_properties && token_properties["id"]
-
-    btc_value =
-      if Application.get_env(:explorer, Explorer.ExchangeRates)[:fetch_btc_value],
-        do: get_btc_value(id, token_properties)
 
     circulating_supply_data = get_circulating_supply(token_properties)
 
@@ -31,25 +32,19 @@ defmodule Explorer.ExchangeRates.Source.CoinMarketCap do
     market_cap_data_usd = get_market_cap_data_usd(token_properties)
 
     total_volume_data_usd = get_total_volume_data_usd(token_properties)
-
-    [
-      %Token{
-        available_supply: to_decimal(circulating_supply_data),
-        total_supply: to_decimal(total_supply_data) || to_decimal(circulating_supply_data),
-        btc_value: btc_value,
-        id: id,
-        last_updated: last_updated,
-        market_cap_usd: to_decimal(market_cap_data_usd),
-        name: token_properties && token_properties["name"],
-        symbol: token_properties && String.upcase(token_properties["symbol"]),
-        usd_value: current_price,
-        volume_24h_usd: to_decimal(total_volume_data_usd)
-      }
-    ]
+    %Token{
+      available_supply: to_decimal(circulating_supply_data),
+      total_supply: to_decimal(total_supply_data) || to_decimal(circulating_supply_data),
+      btc_value: nil,
+      id: id,
+      last_updated: last_updated,
+      market_cap_usd: to_decimal(market_cap_data_usd),
+      name: token_properties && token_properties["name"],
+      symbol: token_properties && String.upcase(token_properties["symbol"]),
+      usd_value: current_price,
+      volume_24h_usd: to_decimal(total_volume_data_usd)
+    }
   end
-
-  @impl Source
-  def format_data(_), do: []
 
   @impl Source
   def source_url do
@@ -65,12 +60,10 @@ defmodule Explorer.ExchangeRates.Source.CoinMarketCap do
       {:ok, _} ->
         # todo: find symbol by contract address hash
         nil
-
       _ ->
-        symbol = if input, do: input |> String.upcase(), else: nil
-
-        if symbol,
-          do: "#{api_quotes_latest_url()}?symbol=#{symbol}&CMC_PRO_API_KEY=#{api_key()}",
+        if Enum.all?(input, &is_integer/1),
+          do:
+            "#{api_quotes_latest_url()}?id=#{Enum.join(input, ",")}&CMC_PRO_API_KEY=#{api_key()}",
           else: nil
     end
   end
@@ -88,15 +81,8 @@ defmodule Explorer.ExchangeRates.Source.CoinMarketCap do
     token_values_list =
       market_data
       |> Map.values()
-
     if Enum.count(token_values_list) > 0 do
-      token_values = token_values_list |> Enum.at(0)
-
-      if Enum.count(token_values) > 0 do
-        token_values |> Enum.at(0)
-      else
-        %{}
-      end
+      token_values_list
     else
       %{}
     end
@@ -142,22 +128,22 @@ defmodule Explorer.ExchangeRates.Source.CoinMarketCap do
     end
   end
 
-  defp get_btc_value(id, token_properties) do
-    case get_btc_price() do
-      {:ok, price} ->
-        btc_price = to_decimal(price)
-        current_price = get_current_price(token_properties)
-
-        if id != "btc" && current_price && btc_price do
-          Decimal.div(current_price, btc_price)
-        else
-          1
-        end
-
-      _ ->
-        1
-    end
-  end
+#  defp get_btc_value(id, token_properties) do
+#    case get_btc_price() do
+#      {:ok, price} ->
+#        btc_price = to_decimal(price)
+#        current_price = get_current_price(token_properties)
+#
+#        if id != "btc" && current_price && btc_price do
+#          Decimal.div(current_price, btc_price)
+#        else
+#          1
+#        end
+#
+#      _ ->
+#        1
+#    end
+#  end
 
   defp base_url do
     config(:base_url) || "https://pro-api.coinmarketcap.com/v2"
@@ -167,23 +153,23 @@ defmodule Explorer.ExchangeRates.Source.CoinMarketCap do
     "#{base_url()}/cryptocurrency/quotes/latest"
   end
 
-  defp get_btc_price(currency \\ "usd") do
-    url = "#{api_quotes_latest_url()}?symbol=BTC&CMC_PRO_API_KEY=#{api_key()}"
-
-    case Source.http_request(url, headers()) do
-      {:ok, data} = resp ->
-        if is_map(data) do
-          current_price = data["rates"][currency]["value"]
-
-          {:ok, current_price}
-        else
-          resp
-        end
-
-      resp ->
-        resp
-    end
-  end
+#  defp get_btc_price(currency \\ "usd") do
+#    url = "#{api_quotes_latest_url()}?symbol=BTC&CMC_PRO_API_KEY=#{api_key()}"
+#
+#    case Source.http_request(url, headers()) do
+#      {:ok, data} = resp ->
+#        if is_map(data) do
+#          current_price = data["rates"][currency]["value"]
+#
+#          {:ok, current_price}
+#        else
+#          resp
+#        end
+#
+#      resp ->
+#        resp
+#    end
+#  end
 
   @spec config(atom()) :: term
   defp config(key) do

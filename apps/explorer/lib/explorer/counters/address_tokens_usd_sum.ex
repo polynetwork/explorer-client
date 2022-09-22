@@ -45,9 +45,10 @@ defmodule Explorer.Counters.AddressTokenUsdSum do
       Task.start_link(fn ->
         update_cache(address_hash_string, token_balances)
       end)
+      Chain.address_tokens_usd_sum(token_balances)
+      else
+      fetch_from_cache("hash_#{address_hash_string}")
     end
-
-    fetch_from_cache("hash_#{address_hash_string}")
   end
 
   def cache_name, do: @cache_name

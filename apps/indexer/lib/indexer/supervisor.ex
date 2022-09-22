@@ -32,7 +32,7 @@ defmodule Indexer.Supervisor do
   end
 
   @impl Supervisor
-  def init(%{memory_monitor: memory_monitor}) do
+  def init(%{memory_monitor: _memory_monitor}) do
     json_rpc_named_arguments = Application.fetch_env!(:indexer, :json_rpc_named_arguments)
 
     coin_balance_fetcher = [
