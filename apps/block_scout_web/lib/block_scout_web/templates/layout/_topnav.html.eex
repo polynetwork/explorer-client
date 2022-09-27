@@ -19,17 +19,12 @@
       <ul class="navbar-nav">
         <%= if Application.get_env(:block_scout_web, BlockScoutWeb.WebRouter)[:enabled] do %>
           <li class="nav-item dropdown">
-            <a class="nav-link topnav-nav-link dropdown-toggle" href="#" id="navbarBlocksDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link topnav-nav-link" href="<%= blocks_path(@conn, :index) %>" id="navbarBlocksDropdown" role="button"  aria-haspopup="true">
               <span class="nav-link-icon">
                 <%= render BlockScoutWeb.IconsView, "_block_icon.html" %>
               </span>
               <%= gettext("Blocks") %>
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarBlocksDropdown">
-              <%= link to: blocks_path(@conn, :index), class: "dropdown-item #{tab_status("blocks", @conn.request_path)}" do %>
-                <%= gettext("Blocks") %>
-              <% end %>
-            </div>
           </li>
           <li class="nav-item dropdown" id="activeTransactions">
             <a href="#" role="button" id="navbarTransactionsDropdown" class="nav-link topnav-nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
